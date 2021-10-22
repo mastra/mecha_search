@@ -1,3 +1,7 @@
 <resources>
     <string name="app_name">Mecha Search</string>
+    <string name="free_shipping">Envío gratis</string>
+    <string name="search">Buscar</string>
+    <string name="search_caption">Buscar en MechaSearch</string>
+    <string name="resultados">resultados</string>
 </resources>

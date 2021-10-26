@@ -4,4 +4,6 @@
     <string name="search">Buscar</string>
     <string name="search_caption">Buscar en MechaSearch</string>
     <string name="resultados">resultados</string>
+    <string name="producto">Producto</string>
+    <string name="descripcion">Descripción</string>
 </resources>

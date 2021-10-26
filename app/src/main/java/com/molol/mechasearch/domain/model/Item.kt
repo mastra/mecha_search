@@ -1,11 +1,15 @@
 package com.molol.mechasearch.domain.model
 
+import com.molol.mechasearch.api.Description
+
 data class Item(
     val id: String? = null,
     val title: String? = null,
     val thumbnail: String? = null,
     val price: Int? = null,
-    val free_shipping: Boolean = false
+    val free_shipping: Boolean = false,
+    val pictures_url: List<String>? = null,
+    var description: String? = null
 )
 
 object TestItems {

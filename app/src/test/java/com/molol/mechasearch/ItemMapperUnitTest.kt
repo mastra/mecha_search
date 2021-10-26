@@ -1,10 +1,13 @@
 package com.molol.mechasearch
 
 import com.google.gson.Gson
+import com.molol.mechasearch.api.Description
 import com.molol.mechasearch.api.ItemResult
 import com.molol.mechasearch.api.SearchResult
+import com.molol.mechasearch.api.util.DescriptionMapper
 import com.molol.mechasearch.api.util.ItemResultMapper
 import com.molol.mechasearch.util.SampleItemResult
+import com.molol.mechasearch.util.SampleItemResult.itemDescription
 import org.junit.Test
 
 import org.junit.Assert.*
@@ -32,4 +35,14 @@ class ItemMapperUnitTest {
         assertEquals(399, results.paging?.total)
         assertEquals("MLA1108034370", results?.results?.first()?.id)
     }
+
+    @Test
+    fun descriptionConvert() {
+        val itemDescription =
+            Gson().fromJson(SampleItemResult.itemDescription, Description::class.java)
+
+        val desc = DescriptionMapper().toModel(itemDescription)
+        assertTrue(desc.startsWith("TREK MARLIN 7 27,5"))
+    }
+
 }

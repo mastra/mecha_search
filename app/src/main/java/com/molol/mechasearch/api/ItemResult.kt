@@ -1,6 +1,6 @@
 package com.molol.mechasearch.api
 
-class ItemResult {
+open class ItemResult {
     var id: String? = null
     var title: String? = null
     var price: Int? = null

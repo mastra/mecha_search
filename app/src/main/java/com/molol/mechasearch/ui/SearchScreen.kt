@@ -1,7 +1,10 @@
 package com.molol.mechasearch.ui
 
+import android.util.Log
+import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.*
@@ -34,34 +37,45 @@ import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.Icon
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.navigation.NavController
 import com.molol.mechasearch.ui.theme.VeryLightGray
 
 @Composable
-fun SearchScreen() {
+fun SearchScreen(navController: NavController) {
+    SearchContent() {
+        navController.navigate("detail/$it")
+    }
+}
 
+@Composable
+fun SearchContent(onClick: (String) -> Unit) {
     val searchResult = Gson().fromJson(SampleItemResult.itemResultShort, SearchResult::class.java)
+    Surface {
+        Column {
+            SearchBar()
 
+            searchResult?.let {
+                SearchInfo(n = it.paging?.total ?: 0)
+                ListResult(searchResult = it, onClick = onClick)
+            }
+        }
+
+    }
+}
+
+@Preview()
+@Composable
+fun DefaultPreview() {
     MechaSearchTheme() {
         Scaffold(
             contentColor = MaterialTheme.colors.primary
         ) { innerPadding ->
 
-            Surface {
-                Column {
-                    SearchBar()
-
-                    searchResult?.let {
-                        SearchInfo(n = it.paging?.total ?: 0)
-                        ListResult(searchResult = it)
-                    }
-                }
-
-            }
-
+            SearchContent() {}
         }
     }
-
 }
+
 
 @Composable
 fun ItemRow(
@@ -128,19 +142,23 @@ fun ItemPreview() {
 
     MechaSearchTheme {
         Surface {
-            ItemRow(item1)
+            ItemRow(item1, Modifier.clickable { Log.d("TAG", "click ${item1.title}") })
 
         }
     }
 }
 
 @Composable
-fun ListResult(searchResult: SearchResult) {
+fun ListResult(searchResult: SearchResult, onClick: (String) -> Unit) {
     val items = searchResult.results?.map { ItemResultMapper().toModel(it) } ?: listOf()
 
     LazyColumn {
         items(items) { item ->
-            ItemRow(item)
+            ItemRow(item, Modifier.clickable {
+                item.id?.let {
+                    onClick(it)
+                }
+            })
             Divider()
         }
     }
@@ -155,7 +173,7 @@ fun ListPreview() {
     MechaSearchTheme {
         Surface {
             searchResult?.let {
-                ListResult(searchResult = it)
+                ListResult(searchResult = it, {})
             }
 
 
@@ -171,11 +189,6 @@ fun AppBar() {
     )
 }
 
-@Preview()
-@Composable
-fun DefaultPreview() {
-    SearchScreen()
-}
 
 @Composable
 fun SearchInfo(n: Int) {

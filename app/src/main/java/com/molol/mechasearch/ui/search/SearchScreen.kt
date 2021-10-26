@@ -1,7 +1,6 @@
-package com.molol.mechasearch.ui
+package com.molol.mechasearch.ui.search
 
 import android.util.Log
-import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -12,7 +11,6 @@ import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.heading
 import androidx.compose.ui.semantics.semantics
@@ -26,7 +24,6 @@ import com.molol.mechasearch.api.ItemResult
 import com.molol.mechasearch.api.SearchResult
 import com.molol.mechasearch.api.util.ItemResultMapper
 import com.molol.mechasearch.domain.model.Item
-import com.molol.mechasearch.domain.model.TestItems
 import com.molol.mechasearch.util.SampleItemResult
 import com.molol.mechasearch.util.toPrice
 import androidx.compose.foundation.lazy.items
@@ -39,6 +36,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.navigation.NavController
 import com.molol.mechasearch.ui.theme.VeryLightGray
+import org.koin.androidx.compose.getViewModel
 
 @Composable
 fun SearchScreen(navController: NavController) {
@@ -49,7 +47,8 @@ fun SearchScreen(navController: NavController) {
 
 @Composable
 fun SearchContent(onClick: (String) -> Unit) {
-    val searchResult = Gson().fromJson(SampleItemResult.itemResultShort, SearchResult::class.java)
+    val viewModel = getViewModel<SearchViewModel>()
+    val searchResult = viewModel.searchResult
     Surface {
         Column {
             SearchBar()

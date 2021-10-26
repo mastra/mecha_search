@@ -1,24 +1,19 @@
-package com.molol.mechasearch.ui
+package com.molol.mechasearch.ui.detail
 
-import android.widget.HorizontalScrollView
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
-import androidx.compose.foundation.shape.CutCornerShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.derivedStateOf
-import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.graphicsLayer
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -28,14 +23,12 @@ import com.google.gson.Gson
 import com.molol.mechasearch.R
 import com.molol.mechasearch.api.Description
 import com.molol.mechasearch.api.ItemDetail
-import com.molol.mechasearch.api.SearchResult
 import com.molol.mechasearch.api.util.DescriptionMapper
 import com.molol.mechasearch.api.util.ItemDetailMapper
 import com.molol.mechasearch.domain.model.Item
 import com.molol.mechasearch.ui.theme.MechaSearchTheme
 import com.molol.mechasearch.ui.theme.VeryLightGray
 import com.molol.mechasearch.util.SampleItemResult
-import com.molol.mechasearch.util.SampleItemResult.itemDescription
 import com.molol.mechasearch.util.toPrice
 
 

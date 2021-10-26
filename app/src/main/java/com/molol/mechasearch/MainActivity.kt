@@ -10,8 +10,8 @@ import androidx.compose.ui.Modifier
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import com.molol.mechasearch.ui.DetailScreen
-import com.molol.mechasearch.ui.SearchScreen
+import com.molol.mechasearch.ui.detail.DetailScreen
+import com.molol.mechasearch.ui.search.SearchScreen
 import com.molol.mechasearch.ui.theme.MechaSearchTheme
 
 

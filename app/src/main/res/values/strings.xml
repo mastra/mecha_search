@@ -6,4 +6,5 @@
     <string name="resultados">resultados</string>
     <string name="producto">Producto</string>
     <string name="descripcion">Descripción</string>
+    <string name="noresults">Sin resultados</string>
 </resources>

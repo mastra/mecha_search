@@ -8,7 +8,6 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.*
 import androidx.compose.material.Text
-import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
@@ -33,9 +32,14 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.Icon
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
+import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.ExperimentalComposeUiApi
+import androidx.compose.ui.platform.LocalFocusManager
+import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.molol.mechasearch.api.util.toModel
 import com.molol.mechasearch.ui.theme.VeryLightGray
@@ -53,17 +57,59 @@ fun SearchContent(onClick: (String) -> Unit) {
     val viewModel = getViewModel<SearchViewModel>()
     val itemList = viewModel.itemList
     Surface {
-        Column {
-            SearchBar({
-                viewModel.search(it)
-            })
-            //searchResult?.let {
-            SearchInfo(n = itemList.value.total ?: 0)
-            ListResult(itemList.value?.items, onClick = onClick)
-            //}
+        Box {
+            Column {
+                SearchBar(viewModel.query) {
+                    viewModel.search(it)
+                }
+                if (itemList.value.total == 0) {
+                    NoResults()
+                } else {
+                    SearchInfo(n = itemList.value.total ?: 0)
+                    ListResult(itemList.value?.items, onClick = onClick)
+                }
+            }
+            if (viewModel.showLoading.value) {
+                Loading()
+            }
         }
 
     }
+}
+
+@Composable
+fun NoResults() {
+    MechaSearchTheme() {
+        Surface() {
+            Column(
+                modifier = Modifier.fillMaxSize(),
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.Center,
+            ) {
+                Text(
+                    stringResource(id = R.string.noresults),
+                    color = Color.Gray,
+                    style = MaterialTheme.typography.h1.copy(fontSize = 40.sp),
+                    textAlign = TextAlign.Center
+                )
+            }
+
+        }
+    }
+
+}
+
+@Composable
+fun Loading() {
+    Column(
+        modifier = Modifier.fillMaxSize(),
+
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.Center,
+    ) {
+        CircularProgressIndicator()
+    }
+
 }
 
 @Preview()
@@ -74,7 +120,8 @@ fun DefaultPreview() {
             contentColor = MaterialTheme.colors.primary
         ) { innerPadding ->
 
-            SearchContent() {}
+            //SearchContent() {}
+            Loading()
         }
     }
 }
@@ -206,17 +253,20 @@ fun SearchInfo(n: Int) {
 
 }
 
-@Composable
-fun SearchBar(onValueChange: (String) -> Unit) {
-    val query = remember { mutableStateOf("") }
 
+//@ExperimentalComposeUiApi
+@Composable
+fun SearchBar(query: MutableState<String>, onValueChange: (String) -> Unit) {
+    //val keyboardController = LocalSoftwareKeyboardController.current
+    val focusManager = LocalFocusManager.current
     Surface(
         modifier = Modifier.fillMaxWidth(),
         color = MaterialTheme.colors.primary,
         contentColor = Color.Transparent
     ) {
 
-        TextField(value = query.value,
+        TextField(
+            value = query.value,
             colors = TextFieldDefaults.textFieldColors(
                 backgroundColor = Color.Transparent,
                 focusedIndicatorColor = Color.Transparent,
@@ -238,9 +288,12 @@ fun SearchBar(onValueChange: (String) -> Unit) {
             },
             keyboardActions = KeyboardActions(onSearch = {
                 onValueChange(query.value)
+                //keyboardController?.hide()
+                focusManager.clearFocus()
             },
                 onDone = {
                     onValueChange(query.value)
+                    focusManager.clearFocus()
                 }),
             shape = RoundedCornerShape(8.dp),
             keyboardOptions = KeyboardOptions(imeAction = ImeAction.Search),
@@ -255,7 +308,7 @@ fun SearchBar(onValueChange: (String) -> Unit) {
 fun SearchBarPreview() {
     MechaSearchTheme {
         Surface {
-            SearchBar({})
+            SearchBar(mutableStateOf(""), {})
         }
     }
 }

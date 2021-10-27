@@ -18,6 +18,8 @@ class ItemRepositoryApiImpl(
     }
 
     override suspend fun detail(id: String): Item {
-        return apiService.detail(id).toModel()
+        val item = apiService.detail(id).toModel()
+        item.description = apiService.description(id).toModel()
+        return item
     }
 }

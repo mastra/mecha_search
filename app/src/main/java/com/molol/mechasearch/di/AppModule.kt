@@ -15,7 +15,7 @@ import retrofit2.converter.gson.GsonConverterFactory
 
 val appModule = module {
     viewModel { SearchViewModel(get()) }
-    viewModel { DetailViewModel() }
+    viewModel { DetailViewModel(get()) }
 
     single<ApiService> {
         val logging = HttpLoggingInterceptor()

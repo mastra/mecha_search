@@ -6,7 +6,9 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
@@ -23,13 +25,15 @@ import com.google.gson.Gson
 import com.molol.mechasearch.R
 import com.molol.mechasearch.api.model.Description
 import com.molol.mechasearch.api.model.ItemDetail
-import com.molol.mechasearch.api.util.DescriptionMapper
-import com.molol.mechasearch.api.util.ItemDetailMapper
+//import com.molol.mechasearch.api.util.DescriptionMapper
+//import com.molol.mechasearch.api.util.ItemDetailMapper
 import com.molol.mechasearch.domain.model.Item
+import com.molol.mechasearch.ui.search.Loading
 import com.molol.mechasearch.ui.theme.MechaSearchTheme
 import com.molol.mechasearch.ui.theme.VeryLightGray
 import com.molol.mechasearch.util.SampleItemResult
 import com.molol.mechasearch.util.toPrice
+import org.koin.androidx.compose.getViewModel
 
 
 @Composable
@@ -39,12 +43,15 @@ fun DetailScreen(navController: NavController, itemId: String?) {
 
 @Composable
 fun DetailContent(itemId: String?, onBack: () -> Unit) {//
+    val viewModel = getViewModel<DetailViewModel>()
 
     val item = Gson().fromJson(SampleItemResult.itemDetail, ItemDetail::class.java)
-    val detail = ItemDetailMapper().toModel(item)
-
-    val itemDescription = Gson().fromJson(SampleItemResult.itemDescription, Description::class.java)
-    detail.description = DescriptionMapper().toModel(itemDescription)
+    val detail = viewModel.detail
+    val detailrem = remember {
+        viewModel.getDetail(itemId ?: "")
+    }
+    //val itemDescription = Gson().fromJson(SampleItemResult.itemDescription, Description::class.java)
+    //detail.value.description = itemDescription.toModel()
 
     MechaSearchTheme() {
         Scaffold(
@@ -53,7 +60,7 @@ fun DetailContent(itemId: String?, onBack: () -> Unit) {//
                 TopAppBar(
 
                     title = {
-                        Text(text = stringResource(R.string.producto) + itemId)
+                        Text(text = stringResource(R.string.producto) + " " + itemId)
                     },
                     backgroundColor = MaterialTheme.colors.primarySurface,
                     navigationIcon = {
@@ -69,8 +76,13 @@ fun DetailContent(itemId: String?, onBack: () -> Unit) {//
         ) { innerPadding ->
 
             Surface {
+                Box {
+                    ItemDetailColumn(item = detail.value)
+                    if (viewModel.showLoading.value) {
+                        Loading()
+                    }
+                }
 
-                ItemDetailColumn(item = detail)
 
             }
 
@@ -80,7 +92,12 @@ fun DetailContent(itemId: String?, onBack: () -> Unit) {//
 
 @Composable
 fun ItemDetailColumn(item: Item) {
-    Column(modifier = Modifier.padding(10.dp)) {
+    val scrollState = rememberScrollState()
+    Column(
+        modifier = Modifier
+            .padding(10.dp)
+            .verticalScroll(scrollState)
+    ) {
         Text(
             text = "Nuevo",
             style = MaterialTheme.typography.subtitle1,
@@ -96,7 +113,7 @@ fun ItemDetailColumn(item: Item) {
         }
 
         Text(
-            text = "\$ ${item.price?.toPrice() ?: "no"}",
+            text = "\$ ${item.price?.toPrice() ?: ""}",
             style = MaterialTheme.typography.h1,
             modifier = Modifier.padding(vertical = 10.dp)
         )

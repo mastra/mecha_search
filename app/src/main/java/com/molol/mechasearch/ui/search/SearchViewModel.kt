@@ -21,6 +21,8 @@ import retrofit2.converter.gson.GsonConverterFactory
 class SearchViewModel(val repository: ItemRepository) : ViewModel() {
     //val searchResult = Gson().fromJson(SampleItemResult.itemResultShort, SearchResult::class.java)
     val itemList: MutableState<ItemList> = mutableStateOf(ItemList())
+    val showLoading: MutableState<Boolean> = mutableStateOf(false)
+    val query: MutableState<String> = mutableStateOf("")
 
     init {
 
@@ -29,10 +31,10 @@ class SearchViewModel(val repository: ItemRepository) : ViewModel() {
 
     fun search(query: String) {
         viewModelScope.launch {
-
+            showLoading.value = true
             //CoroutineScope(Dispatchers.IO).launch {
             var resp = repository.search(query) //"MLA1108034370")
-
+            showLoading.value = false
             Log.d("DEBUG", "response ${resp.items}")//show Recyclerview
             itemList.value = resp
 

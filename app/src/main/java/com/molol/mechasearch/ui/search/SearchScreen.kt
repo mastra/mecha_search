@@ -20,21 +20,24 @@ import coil.compose.rememberImagePainter
 import com.google.gson.Gson
 import com.molol.mechasearch.ui.theme.MechaSearchTheme
 import com.molol.mechasearch.R
-import com.molol.mechasearch.api.ItemResult
-import com.molol.mechasearch.api.SearchResult
-import com.molol.mechasearch.api.util.ItemResultMapper
+import com.molol.mechasearch.api.model.ItemResult
+import com.molol.mechasearch.api.model.SearchResult
 import com.molol.mechasearch.domain.model.Item
 import com.molol.mechasearch.util.SampleItemResult
 import com.molol.mechasearch.util.toPrice
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.KeyboardActions
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.Icon
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.ui.text.input.ImeAction
 import androidx.navigation.NavController
+import com.molol.mechasearch.api.util.toModel
 import com.molol.mechasearch.ui.theme.VeryLightGray
 import org.koin.androidx.compose.getViewModel
 
@@ -48,15 +51,16 @@ fun SearchScreen(navController: NavController) {
 @Composable
 fun SearchContent(onClick: (String) -> Unit) {
     val viewModel = getViewModel<SearchViewModel>()
-    val searchResult = viewModel.searchResult
+    val itemList = viewModel.itemList
     Surface {
         Column {
-            SearchBar()
-
-            searchResult?.let {
-                SearchInfo(n = it.paging?.total ?: 0)
-                ListResult(searchResult = it, onClick = onClick)
-            }
+            SearchBar({
+                viewModel.search(it)
+            })
+            //searchResult?.let {
+            SearchInfo(n = itemList.value.total ?: 0)
+            ListResult(itemList.value?.items, onClick = onClick)
+            //}
         }
 
     }
@@ -137,28 +141,27 @@ fun ItemRow(
 fun ItemPreview() {
 
     val result1 = Gson().fromJson(SampleItemResult.item1, ItemResult::class.java)
-    val item1 = ItemResultMapper().toModel(result1)
+    val item1 = result1.toModel()
 
     MechaSearchTheme {
         Surface {
             ItemRow(item1, Modifier.clickable { Log.d("TAG", "click ${item1.title}") })
-
         }
     }
 }
 
 @Composable
-fun ListResult(searchResult: SearchResult, onClick: (String) -> Unit) {
-    val items = searchResult.results?.map { ItemResultMapper().toModel(it) } ?: listOf()
-
+fun ListResult(itemList: List<Item>?, onClick: (String) -> Unit) {
     LazyColumn {
-        items(items) { item ->
-            ItemRow(item, Modifier.clickable {
-                item.id?.let {
-                    onClick(it)
-                }
-            })
-            Divider()
+        itemList?.let {
+            items(it) { item ->
+                ItemRow(item, Modifier.clickable {
+                    item.id?.let {
+                        onClick(it)
+                    }
+                })
+                Divider()
+            }
         }
     }
 }
@@ -168,24 +171,17 @@ fun ListResult(searchResult: SearchResult, onClick: (String) -> Unit) {
 fun ListPreview() {
 
     val searchResult = Gson().fromJson(SampleItemResult.itemResultShort, SearchResult::class.java)
+    val items = searchResult.results?.map { it.toModel() } ?: listOf()
 
     MechaSearchTheme {
         Surface {
-            searchResult?.let {
-                ListResult(searchResult = it, {})
+            items?.let {
+                ListResult(it, {})
             }
 
 
         }
     }
-}
-
-@Composable
-fun AppBar() {
-    TopAppBar(
-        title = { Text(text = stringResource(id = R.string.app_name)) },
-        backgroundColor = MaterialTheme.colors.primarySurface
-    )
 }
 
 
@@ -211,7 +207,7 @@ fun SearchInfo(n: Int) {
 }
 
 @Composable
-fun SearchBar() {
+fun SearchBar(onValueChange: (String) -> Unit) {
     val query = remember { mutableStateOf("") }
 
     Surface(
@@ -233,11 +229,21 @@ fun SearchBar() {
                     color = MaterialTheme.colors.background,
                     shape = CircleShape
                 ),
+            singleLine = true,
             maxLines = 1,
             // label = {
             //    Text( text = stringResource(id = R.string.search_caption))},
-            onValueChange = { query.value = it },
+            onValueChange = {
+                query.value = it
+            },
+            keyboardActions = KeyboardActions(onSearch = {
+                onValueChange(query.value)
+            },
+                onDone = {
+                    onValueChange(query.value)
+                }),
             shape = RoundedCornerShape(8.dp),
+            keyboardOptions = KeyboardOptions(imeAction = ImeAction.Search),
             leadingIcon = {
                 Icon(Icons.Filled.Search, contentDescription = stringResource(id = R.string.search))
             })
@@ -249,7 +255,7 @@ fun SearchBar() {
 fun SearchBarPreview() {
     MechaSearchTheme {
         Surface {
-            SearchBar()
+            SearchBar({})
         }
     }
 }

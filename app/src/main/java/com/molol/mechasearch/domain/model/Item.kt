@@ -1,7 +1,5 @@
 package com.molol.mechasearch.domain.model
 
-import com.molol.mechasearch.api.Description
-
 data class Item(
     val id: String? = null,
     val title: String? = null,

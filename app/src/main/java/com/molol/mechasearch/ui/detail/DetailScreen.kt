@@ -21,8 +21,8 @@ import androidx.navigation.NavController
 import coil.compose.rememberImagePainter
 import com.google.gson.Gson
 import com.molol.mechasearch.R
-import com.molol.mechasearch.api.Description
-import com.molol.mechasearch.api.ItemDetail
+import com.molol.mechasearch.api.model.Description
+import com.molol.mechasearch.api.model.ItemDetail
 import com.molol.mechasearch.api.util.DescriptionMapper
 import com.molol.mechasearch.api.util.ItemDetailMapper
 import com.molol.mechasearch.domain.model.Item

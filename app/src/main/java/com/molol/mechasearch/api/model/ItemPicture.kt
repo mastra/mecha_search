@@ -1,4 +1,4 @@
-package com.molol.mechasearch.api
+package com.molol.mechasearch.api.model
 
 class ItemPicture {
     var id: String? = null

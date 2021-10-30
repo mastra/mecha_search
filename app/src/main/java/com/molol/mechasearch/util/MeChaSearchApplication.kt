@@ -1,7 +1,8 @@
 package com.molol.mechasearch.util
 
 import android.app.Application
-import com.molol.mechasearch.di.appModule
+import com.molol.mechasearch.data.di.dataModule
+import com.molol.mechasearch.ui.di.appModule
 import org.koin.core.context.startKoin
 
 class MeChaSearchApplication : Application() {
@@ -15,7 +16,7 @@ class MeChaSearchApplication : Application() {
             //inject Android context
             //androidContext(this@MainApplication)
             // use modules
-            modules(appModule)
+            modules(appModule, dataModule)
         }
 
     }

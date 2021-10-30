@@ -1,4 +1,4 @@
-package com.molol.mechasearch.api.model
+package com.molol.mechasearch.data.api.model
 
 //"total":399,"primary_results":7,"offset":0,"limit":50},
 class Paging {

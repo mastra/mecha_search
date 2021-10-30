@@ -1,8 +1,8 @@
-package com.molol.mechasearch.api
+package com.molol.mechasearch.data.api
 
-import com.molol.mechasearch.api.model.Description
-import com.molol.mechasearch.api.model.ItemDetail
-import com.molol.mechasearch.api.model.SearchResult
+import com.molol.mechasearch.data.api.model.Description
+import com.molol.mechasearch.data.api.model.ItemDetail
+import com.molol.mechasearch.data.api.model.SearchResult
 import retrofit2.Response
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
@@ -17,7 +17,7 @@ import okhttp3.logging.HttpLoggingInterceptor
 interface ApiService {
 
     @GET("sites/MLA/search")
-    suspend fun search(@Query("q") q: String): SearchResult
+    suspend fun search(@Query("q") q: String, @Query("offset") offset: Int): SearchResult
 
     @GET("items/{id}")
     suspend fun detail(@Path("id") id: String): ItemDetail

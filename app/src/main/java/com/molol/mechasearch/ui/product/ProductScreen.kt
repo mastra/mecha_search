@@ -1,4 +1,4 @@
-package com.molol.mechasearch.ui.detail
+package com.molol.mechasearch.ui.product
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -23,29 +23,29 @@ import androidx.navigation.NavController
 import coil.compose.rememberImagePainter
 import com.google.gson.Gson
 import com.molol.mechasearch.R
-import com.molol.mechasearch.api.model.Description
-import com.molol.mechasearch.api.model.ItemDetail
-//import com.molol.mechasearch.api.util.DescriptionMapper
-//import com.molol.mechasearch.api.util.ItemDetailMapper
+import com.molol.mechasearch.data.api.model.ItemDetail
+//import com.molol.mechasearch.data.api.util.DescriptionMapper
+//import com.molol.mechasearch.data.api.util.ItemDetailMapper
 import com.molol.mechasearch.domain.model.Item
 import com.molol.mechasearch.ui.search.Loading
 import com.molol.mechasearch.ui.theme.MechaSearchTheme
 import com.molol.mechasearch.ui.theme.VeryLightGray
+import com.molol.mechasearch.ui.util.ImageSlider
 import com.molol.mechasearch.util.SampleItemResult
 import com.molol.mechasearch.util.toPrice
 import org.koin.androidx.compose.getViewModel
 
 
 @Composable
-fun DetailScreen(navController: NavController, itemId: String?) {
-    DetailContent(itemId) { navController.popBackStack() }
+fun ProductScreen(navController: NavController, itemId: String?) {
+    ProductContent(itemId) { navController.popBackStack() }
 }
 
 @Composable
-fun DetailContent(itemId: String?, onBack: () -> Unit) {//
-    val viewModel = getViewModel<DetailViewModel>()
+fun ProductContent(itemId: String?, onBack: () -> Unit) {//
+    val viewModel = getViewModel<ProductViewModel>()
 
-    val item = Gson().fromJson(SampleItemResult.itemDetail, ItemDetail::class.java)
+    //val item = Gson().fromJson(SampleItemResult.itemDetail, ItemDetail::class.java)
     val detail = viewModel.detail
     val detailrem = remember {
         viewModel.getDetail(itemId ?: "")
@@ -127,47 +127,8 @@ fun ItemDetailColumn(item: Item) {
     }
 }
 
-@Composable
-fun ImageSlider(pictures: List<String>) {
-    val sliderState = rememberLazyListState()
-    val currentPage = remember {
-        derivedStateOf {
-            sliderState.firstVisibleItemIndex
-        }
-    }
-    Column(modifier = Modifier.padding(vertical = 10.dp)) {
-        Text(
-            text = "${currentPage.value + 1} / ${pictures.size}",
-            Modifier
-                .background(VeryLightGray, shape = RoundedCornerShape(8.dp))
-                .padding(horizontal = 8.dp, vertical = 3.dp)
-
-        )
-        Box(modifier = Modifier.fillMaxWidth()) {
-            BoxWithConstraints(modifier = Modifier.fillMaxWidth()) {
-                LazyRow(
-                    modifier = Modifier.fillMaxWidth(),
-                    state = sliderState
-                ) {
-                    items(pictures) { picture ->
-                        Image(
-                            painter = rememberImagePainter(picture),
-                            //painter = painterResource(id = R.drawable.trek),
-                            contentDescription = null,
-                            modifier = Modifier
-                                .height(200.dp)
-                                .width(maxWidth)
-                        )
-                    }
-
-                }
-            }
-        }
-    }
-}
-
 @Preview
 @Composable
 fun DetailPreview() {
-    DetailContent("888") {}
+    ProductContent("888") {}
 }

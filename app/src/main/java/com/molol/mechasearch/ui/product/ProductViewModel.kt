@@ -1,4 +1,4 @@
-package com.molol.mechasearch.ui.detail
+package com.molol.mechasearch.ui.product
 
 import android.util.Log
 import androidx.compose.runtime.MutableState
@@ -6,11 +6,10 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.molol.mechasearch.domain.model.Item
-import com.molol.mechasearch.domain.model.ItemList
-import com.molol.mechasearch.repository.ItemRepository
+import com.molol.mechasearch.domain.repository.ItemRepository
 import kotlinx.coroutines.launch
 
-class DetailViewModel(
+class ProductViewModel(
     val itemRepository: ItemRepository
 ) : ViewModel() {
 

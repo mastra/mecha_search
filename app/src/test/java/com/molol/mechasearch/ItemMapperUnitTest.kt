@@ -1,11 +1,11 @@
 package com.molol.mechasearch
 
 import com.google.gson.Gson
-import com.molol.mechasearch.api.model.Description
-import com.molol.mechasearch.api.model.ItemResult
-import com.molol.mechasearch.api.model.SearchResult
-import com.molol.mechasearch.api.util.DescriptionMapper
-import com.molol.mechasearch.api.util.ItemResultMapper
+import com.molol.mechasearch.data.api.model.Description
+import com.molol.mechasearch.data.api.model.ItemResult
+import com.molol.mechasearch.data.api.model.SearchResult
+import com.molol.mechasearch.data.api.util.DescriptionMapper
+import com.molol.mechasearch.data.api.util.ItemResultMapper
 import com.molol.mechasearch.util.SampleItemResult
 import org.junit.Test
 

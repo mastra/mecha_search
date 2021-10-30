@@ -1,4 +1,4 @@
-package com.molol.mechasearch.api.model
+package com.molol.mechasearch.data.api.model
 
 class SearchResult {
     var site_id: String? = null

@@ -19,12 +19,13 @@ import coil.compose.rememberImagePainter
 import com.google.gson.Gson
 import com.molol.mechasearch.ui.theme.MechaSearchTheme
 import com.molol.mechasearch.R
-import com.molol.mechasearch.api.model.ItemResult
-import com.molol.mechasearch.api.model.SearchResult
+import com.molol.mechasearch.data.api.model.ItemResult
+import com.molol.mechasearch.data.api.model.SearchResult
 import com.molol.mechasearch.domain.model.Item
 import com.molol.mechasearch.util.SampleItemResult
 import com.molol.mechasearch.util.toPrice
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
@@ -41,8 +42,12 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
-import com.molol.mechasearch.api.util.toModel
+import com.molol.mechasearch.data.api.util.toModel
 import com.molol.mechasearch.ui.theme.VeryLightGray
+import kotlinx.coroutines.InternalCoroutinesApi
+import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.filter
+import kotlinx.coroutines.flow.collect
 import org.koin.androidx.compose.getViewModel
 
 @Composable
@@ -66,7 +71,9 @@ fun SearchContent(onClick: (String) -> Unit) {
                     NoResults()
                 } else {
                     SearchInfo(n = itemList.value.total ?: 0)
-                    ListResult(itemList.value?.items, onClick = onClick)
+                    ListResult(itemList.value?.items, onClick = onClick) {
+                        viewModel.loadMore(it)
+                    }
                 }
             }
             if (viewModel.showLoading.value) {
@@ -197,9 +204,26 @@ fun ItemPreview() {
     }
 }
 
+
 @Composable
-fun ListResult(itemList: List<Item>?, onClick: (String) -> Unit) {
-    LazyColumn {
+fun ListResult(
+    itemList: List<Item>?,
+    onClick: (String) -> Unit = {},
+    onLoadMore: (Int) -> Unit = {}
+) {
+    Log.d("STATRE", "listresult")
+    print("ACA")
+    val listState = rememberLazyListState()
+    val needMore = remember {
+        derivedStateOf {
+            val layoutInfo = listState.layoutInfo
+            val totalItemsNumber = layoutInfo.totalItemsCount
+            val lastVisibleItemIndex = (layoutInfo.visibleItemsInfo.lastOrNull()?.index ?: 0) + 1
+
+            lastVisibleItemIndex > (totalItemsNumber - 5)
+        }
+    }
+    LazyColumn(state = listState) {
         itemList?.let {
             items(it) { item ->
                 ItemRow(item, Modifier.clickable {
@@ -211,6 +235,16 @@ fun ListResult(itemList: List<Item>?, onClick: (String) -> Unit) {
             }
         }
     }
+
+    LaunchedEffect(needMore) {
+        snapshotFlow { needMore.value }
+            .distinctUntilChanged()
+            .filter { it }
+            .collect {
+                onLoadMore(itemList?.size ?: 0)
+            }
+    }
+
 }
 
 @Preview(showBackground = true)
@@ -223,7 +257,7 @@ fun ListPreview() {
     MechaSearchTheme {
         Surface {
             items?.let {
-                ListResult(it, {})
+                ListResult(it)
             }
 
 

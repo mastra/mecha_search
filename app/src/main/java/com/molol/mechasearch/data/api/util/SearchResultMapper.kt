@@ -1,6 +1,6 @@
-package com.molol.mechasearch.api.util
+package com.molol.mechasearch.data.api.util
 
-import com.molol.mechasearch.api.model.SearchResult
+import com.molol.mechasearch.data.api.model.SearchResult
 import com.molol.mechasearch.domain.model.ItemList
 
 //interface Mapper  {

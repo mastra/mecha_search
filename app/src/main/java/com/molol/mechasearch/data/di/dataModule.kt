@@ -1,21 +1,15 @@
-package com.molol.mechasearch.di
+package com.molol.mechasearch.data.di
 
-import com.molol.mechasearch.api.ApiService
-import com.molol.mechasearch.api.ApiService.Companion.BASE_URL
-import com.molol.mechasearch.repository.ItemRepository
-import com.molol.mechasearch.repository.ItemRepositoryApiImpl
-import com.molol.mechasearch.ui.detail.DetailViewModel
-import com.molol.mechasearch.ui.search.SearchViewModel
+import com.molol.mechasearch.data.api.ApiService
+import com.molol.mechasearch.data.repository.ItemRepositoryApiImpl
+import com.molol.mechasearch.domain.repository.ItemRepository
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
-import org.koin.androidx.viewmodel.dsl.viewModel
 import org.koin.dsl.module
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 
-val appModule = module {
-    viewModel { SearchViewModel(get()) }
-    viewModel { DetailViewModel(get()) }
+val dataModule = module {
 
     single<ApiService> {
         val logging = HttpLoggingInterceptor()
@@ -23,7 +17,7 @@ val appModule = module {
         val httpClient = OkHttpClient.Builder()
         httpClient.addInterceptor(logging)
         val retrofit = Retrofit.Builder()
-            .baseUrl(BASE_URL)
+            .baseUrl(ApiService.BASE_URL)
             .addConverterFactory(GsonConverterFactory.create())
             .client(httpClient.build())
             .build()

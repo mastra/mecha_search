@@ -4,8 +4,7 @@ import com.google.gson.Gson
 import com.molol.mechasearch.data.api.model.Description
 import com.molol.mechasearch.data.api.model.ItemResult
 import com.molol.mechasearch.data.api.model.SearchResult
-import com.molol.mechasearch.data.api.util.DescriptionMapper
-import com.molol.mechasearch.data.api.util.ItemResultMapper
+import com.molol.mechasearch.data.api.util.toModel
 import com.molol.mechasearch.util.SampleItemResult
 import org.junit.Test
 
@@ -20,7 +19,7 @@ class ItemMapperUnitTest {
     @Test
     fun itemJsonConvert() {
         val result1 = Gson().fromJson(SampleItemResult.item1, ItemResult::class.java)
-        val item1 = ItemResultMapper().toModel(result1)
+        val item1 = result1.toModel()
 
         assertEquals(result1.id, item1.id)
         assertEquals(result1.title, item1.title)
@@ -40,7 +39,7 @@ class ItemMapperUnitTest {
         val itemDescription =
             Gson().fromJson(SampleItemResult.itemDescription, Description::class.java)
 
-        val desc = DescriptionMapper().toModel(itemDescription)
+        val desc = itemDescription.toModel()
         assertTrue(desc.startsWith("TREK MARLIN 7 27,5"))
     }
 

@@ -27,5 +27,18 @@ interface ApiService {
 
     companion object {
         const val BASE_URL = "https://api.mercadolibre.com/"
+
+        fun getService(): ApiService {
+            val logging = HttpLoggingInterceptor()
+            logging.setLevel(HttpLoggingInterceptor.Level.BODY)
+            val httpClient = OkHttpClient.Builder()
+            httpClient.addInterceptor(logging)
+            val retrofit = Retrofit.Builder()
+                .baseUrl(ApiService.BASE_URL)
+                .addConverterFactory(GsonConverterFactory.create())
+                .client(httpClient.build())
+                .build()
+            return retrofit.create(ApiService::class.java)
+        }
     }
 }

@@ -8,9 +8,10 @@ import androidx.lifecycle.viewModelScope
 import com.molol.mechasearch.domain.model.Item
 import com.molol.mechasearch.domain.model.ItemList
 import com.molol.mechasearch.domain.repository.ItemRepository
+import com.molol.mechasearch.domain.usecase.SearchUseCase
 import kotlinx.coroutines.launch
 
-class SearchViewModel(val repository: ItemRepository) : ViewModel() {
+class SearchViewModel(val searchUseCase: SearchUseCase) : ViewModel() {
     //val searchResult = Gson().fromJson(SampleItemResult.itemResultShort, SearchResult::class.java)
     val itemList: MutableState<ItemList> = mutableStateOf(ItemList())
     val showLoading: MutableState<Boolean> = mutableStateOf(false)
@@ -25,7 +26,7 @@ class SearchViewModel(val repository: ItemRepository) : ViewModel() {
         viewModelScope.launch {
             showLoading.value = true
             //CoroutineScope(Dispatchers.IO).launch {
-            var resp = repository.search(query) //"MLA1108034370")
+            var resp = searchUseCase(query) //"MLA1108034370")
             showLoading.value = false
             Log.d("DEBUG", "response ${resp.items}")//show Recyclerview
             itemList.value = resp
@@ -38,7 +39,7 @@ class SearchViewModel(val repository: ItemRepository) : ViewModel() {
         viewModelScope.launch {
             showLoading.value = true
             //CoroutineScope(Dispatchers.IO).launch {
-            var resp = repository.search(query.value, offset) //"MLA1108034370")
+            var resp = searchUseCase(query.value, offset) //"MLA1108034370")
             showLoading.value = false
             Log.d("DEBUG", "response ${resp.items}")//show Recyclerview
 

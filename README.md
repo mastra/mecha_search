@@ -5,8 +5,9 @@
 - Jetpack Compose navigation
 - Koin
 - Retrofit
+- Room
 - Coil
-- Clean Architecture
+- MVVM - Clean Architecture
 
 ## Endpoints
 - https://api.mercadolibre.com/sites/MLA/search?q=

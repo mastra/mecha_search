@@ -8,6 +8,11 @@
 - Coil
 - Clean Architecture
 
+## Endpoints
+- https://api.mercadolibre.com/sites/MLA/search?q=
+- https://api.mercadolibre.com/items/{id}
+- https://api.mercadolibre.com/items/{id}/description
+
 ## Buscar
 ![](images/search.png)
 

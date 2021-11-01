@@ -9,17 +9,21 @@ import com.molol.mechasearch.domain.repository.ItemRepository
 class ItemRepositoryApiImpl(
     val apiService: ApiService
 ) : ItemRepository {
-    override suspend fun search(query: String, offset: Int): ItemList {
-        val response = apiService.search(query, offset)
-        //if(response.isSuccessful) {
-        //    return response.body()!!
-        //}
-        return response.toModel()
-    }
+    override suspend fun search(query: String, offset: Int) =
+        try {
+            apiService.search(query, offset).toModel()
+        } catch (e: Exception) {
+            ItemList()
+        }
 
-    override suspend fun detail(id: String): Item {
-        val item = apiService.detail(id).toModel()
-        item.description = apiService.description(id).toModel()
-        return item
-    }
+
+    override suspend fun detail(id: String) =
+        try {
+            apiService.detail(id).toModel().apply {
+                description = apiService.description(id).toModel()
+            }
+        } catch (e: Exception) {
+            Item()
+        }
+
 }

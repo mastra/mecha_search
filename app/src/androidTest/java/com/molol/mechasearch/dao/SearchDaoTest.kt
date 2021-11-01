@@ -13,6 +13,7 @@ import com.molol.mechasearch.data.database.model.ResultEntity
 import com.molol.mechasearch.data.database.model.SearchEntity
 import junit.framework.Assert
 import junit.framework.Assert.assertEquals
+import junit.framework.Assert.assertNull
 import kotlinx.coroutines.runBlocking
 import org.junit.After
 import org.junit.Before
@@ -69,8 +70,8 @@ class SearchDaoTest {
         searchDao.insert(search = search1)
 
         val actual = searchDao.getSearch("trek")
-        assertEquals(search1.query, actual.query)
-        assertEquals(search1.total, actual.total)
+        assertEquals(search1.query, actual?.query)
+        assertEquals(search1.total, actual?.total)
     }
 
     @Test
@@ -104,5 +105,13 @@ class SearchDaoTest {
         assertEquals(2, actual.size)
         assertEquals(product1.id, actual.first { it.id == product1.id }.id)
         assertEquals(product2.id, actual.first { it.id == product2.id }.id)
+    }
+
+    @Test
+    @Throws(Exception::class)
+    fun `get-non-existent`() = runBlocking {
+        val actual = searchDao.getSearch("caloi")
+        assertNull(actual)
+
     }
 }

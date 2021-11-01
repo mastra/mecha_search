@@ -14,10 +14,10 @@ interface SearchEntityDao {
         suspend fun getAll(): List<SearchEntity>
 
         @Query("SELECT * FROM search_table WHERE query LIKE :query")
-        suspend fun getSearch(query: String): SearchEntity
+        suspend fun getSearch(query: String): SearchEntity?
 
         @Insert(onConflict = OnConflictStrategy.REPLACE)
-        suspend fun insert(search: SearchEntity)
+        suspend fun insert(search: SearchEntity): Long
 
         @Query(
                 "SELECT product_table.* FROM search_table, result_table, product_table " +

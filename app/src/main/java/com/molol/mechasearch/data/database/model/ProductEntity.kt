@@ -13,3 +13,5 @@ data class ProductEntity(
     @ColumnInfo(name = "free_shipping") val free_shipping: Boolean,
     @ColumnInfo(name = "description") var description: String?
 )
+
+data class ProductUpdate(val id: String, val description: String)

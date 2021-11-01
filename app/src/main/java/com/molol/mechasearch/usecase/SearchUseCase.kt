@@ -1,4 +1,4 @@
-package com.molol.mechasearch.domain.usecase
+package com.molol.mechasearch.usecase
 
 import com.molol.mechasearch.domain.model.Item
 import com.molol.mechasearch.domain.model.ItemList

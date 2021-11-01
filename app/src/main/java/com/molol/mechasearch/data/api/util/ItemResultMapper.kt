@@ -7,10 +7,10 @@ import com.molol.mechasearch.domain.util.ModelMapper
 //interface ItemResultMapper  {
 fun ItemResult.toModel(): Item {
     return Item(
-        id,
-        title,
-        thumbnail,
-        price?.toInt(),
+        id ?: "",
+        title ?: "",
+        thumbnail ?: "",
+        price?.toInt() ?: 0,
         shipping?.free_shipping ?: false
     )
 }

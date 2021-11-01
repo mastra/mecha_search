@@ -318,7 +318,7 @@ fun SearchBar(query: MutableState<String>, onValueChange: (String) -> Unit) {
             // label = {
             //    Text( text = stringResource(id = R.string.search_caption))},
             onValueChange = {
-                query.value = it
+                query.value = it.trim()
             },
             keyboardActions = KeyboardActions(onSearch = {
                 onValueChange(query.value)

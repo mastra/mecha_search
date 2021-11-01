@@ -8,7 +8,8 @@ import androidx.lifecycle.viewModelScope
 import com.molol.mechasearch.domain.model.Item
 import com.molol.mechasearch.domain.model.ItemList
 import com.molol.mechasearch.domain.repository.ItemRepository
-import com.molol.mechasearch.domain.usecase.SearchUseCase
+import com.molol.mechasearch.usecase.SearchUseCase
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
 class SearchViewModel(val searchUseCase: SearchUseCase) : ViewModel() {
@@ -17,32 +18,22 @@ class SearchViewModel(val searchUseCase: SearchUseCase) : ViewModel() {
     val showLoading: MutableState<Boolean> = mutableStateOf(false)
     val query: MutableState<String> = mutableStateOf("")
 
-    init {
-
-        //request()
-    }
-
     fun search(query: String) {
-        viewModelScope.launch {
+        viewModelScope.launch(Dispatchers.IO) {
             showLoading.value = true
-            //CoroutineScope(Dispatchers.IO).launch {
             var resp = searchUseCase(query) //"MLA1108034370")
             showLoading.value = false
-            Log.d("DEBUG", "response ${resp.items}")//show Recyclerview
+            Log.d("DEBUG", "response ${resp.items}")
             itemList.value = resp
-
-            //}
         }
     }
 
     fun loadMore(offset: Int) {
-        viewModelScope.launch {
+        viewModelScope.launch(Dispatchers.IO) {
             showLoading.value = true
-            //CoroutineScope(Dispatchers.IO).launch {
-            var resp = searchUseCase(query.value, offset) //"MLA1108034370")
+            var resp = searchUseCase(query.value, offset)
             showLoading.value = false
-            Log.d("DEBUG", "response ${resp.items}")//show Recyclerview
-
+            Log.d("DEBUG", "response ${resp.items}")
             itemList.value
             val all = mutableListOf<Item>()
             itemList.value.items?.let {
@@ -51,9 +42,6 @@ class SearchViewModel(val searchUseCase: SearchUseCase) : ViewModel() {
             resp.items?.let {
                 all.addAll(it)
             }
-
-
-            //}
         }
     }
 }

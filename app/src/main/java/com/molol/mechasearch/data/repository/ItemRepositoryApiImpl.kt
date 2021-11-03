@@ -1,10 +1,13 @@
 package com.molol.mechasearch.data.repository
 
 import com.molol.mechasearch.data.api.ApiService
+import com.molol.mechasearch.data.api.model.ItemDetail
 import com.molol.mechasearch.data.api.util.toModel
 import com.molol.mechasearch.domain.model.Item
 import com.molol.mechasearch.domain.model.ItemList
 import com.molol.mechasearch.domain.repository.ItemRepository
+import kotlinx.coroutines.*
+import kotlin.system.*
 
 class ItemRepositoryApiImpl(
     val apiService: ApiService
@@ -18,12 +21,18 @@ class ItemRepositoryApiImpl(
 
 
     override suspend fun detail(id: String) =
-        try {
-            apiService.detail(id).toModel().apply {
-                description = apiService.description(id).toModel()
+        coroutineScope {
+            try {
+                val product = async { apiService.detail(id) }
+                val desc = async { apiService.description(id) }
+                product.await().toModel().apply {
+                    description = desc.await().toModel()
+                }
+            } catch (e: Exception) {
+                Item()
             }
-        } catch (e: Exception) {
-            Item()
         }
 
 }
+
+

@@ -15,30 +15,11 @@ import okhttp3.logging.HttpLoggingInterceptor
 
 
 interface ApiService {
-
-    @GET("sites/MLA/search")
-    suspend fun search(@Query("q") q: String, @Query("offset") offset: Int): SearchResult
-
-    @GET("items/{id}")
-    suspend fun detail(@Path("id") id: String): ItemDetail
-
-    @GET("items/{id}/description")
-    suspend fun description(@Path("id") id: String): Description
+    suspend fun search(q: String, offset: Int = 0): SearchResult
+    suspend fun detail(id: String): ItemDetail
+    suspend fun description(id: String): Description
 
     companion object {
         const val BASE_URL = "https://api.mercadolibre.com/"
-
-        fun getService(): ApiService {
-            val logging = HttpLoggingInterceptor()
-            logging.setLevel(HttpLoggingInterceptor.Level.BODY)
-            val httpClient = OkHttpClient.Builder()
-            httpClient.addInterceptor(logging)
-            val retrofit = Retrofit.Builder()
-                .baseUrl(ApiService.BASE_URL)
-                .addConverterFactory(GsonConverterFactory.create())
-                .client(httpClient.build())
-                .build()
-            return retrofit.create(ApiService::class.java)
-        }
     }
 }

@@ -4,10 +4,12 @@
 - Jetpack Compose
 - Jetpack Compose navigation
 - Koin
-- Retrofit
+- Retrofit y KTOR Client
 - Room
 - Coil
 - MVVM - Clean Architecture
+- Scroll infinito
+- Image slider (muy simple)
 
 ## Endpoints
 - https://api.mercadolibre.com/sites/MLA/search?q=

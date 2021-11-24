@@ -7,6 +7,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.molol.mechasearch.domain.model.Item
 import com.molol.mechasearch.domain.repository.ItemRepository
+import com.molol.mechasearch.domain.util.GResult
 import kotlinx.coroutines.launch
 
 class ProductViewModel(
@@ -22,12 +23,14 @@ class ProductViewModel(
         viewModelScope.launch {
             showLoading.value = true
             val item = itemRepository.detail(itemId)
-            detail.value = item
-            showLoading.value = false
-            Log.d(
-                "DEBUG",
-                "TITULO: ${item.title} \n DESC ${item.description}\n PIC: ${item.pictures_url}"
-            )
+            if (item is GResult.Success) {
+                detail.value = item.data
+                showLoading.value = false
+                Log.d(
+                    "DEBUG",
+                    "TITULO: ${item.data.title} \n DESC ${item.data.description}\n PIC: ${item.data.pictures_url}"
+                )
+            }
 
         }
         return 1

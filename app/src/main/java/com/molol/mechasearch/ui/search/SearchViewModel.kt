@@ -8,6 +8,7 @@ import androidx.lifecycle.viewModelScope
 import com.molol.mechasearch.domain.model.Item
 import com.molol.mechasearch.domain.model.ItemList
 import com.molol.mechasearch.domain.repository.ItemRepository
+import com.molol.mechasearch.domain.util.GResult
 import com.molol.mechasearch.usecase.SearchUseCase
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -22,9 +23,11 @@ class SearchViewModel(val searchUseCase: SearchUseCase) : ViewModel() {
         viewModelScope.launch(Dispatchers.IO) {
             showLoading.value = true
             var resp = searchUseCase(query) //"MLA1108034370")
-            showLoading.value = false
-            Log.d("DEBUG", "response ${resp.items}")
-            itemList.value = resp
+            if (resp is GResult.Success) {
+                showLoading.value = false
+                Log.d("DEBUG", "response ${resp.data.items}")
+                itemList.value = resp.data
+            }
         }
     }
 
@@ -32,15 +35,17 @@ class SearchViewModel(val searchUseCase: SearchUseCase) : ViewModel() {
         viewModelScope.launch(Dispatchers.IO) {
             showLoading.value = true
             var resp = searchUseCase(query.value, offset)
-            showLoading.value = false
-            Log.d("DEBUG", "response ${resp.items}")
-            itemList.value
-            val all = mutableListOf<Item>()
-            itemList.value.items?.let {
-                all.addAll(it)
-            }
-            resp.items?.let {
-                all.addAll(it)
+            if (resp is GResult.Success) {
+                showLoading.value = false
+                Log.d("DEBUG", "response ${resp.data.items}")
+                itemList.value
+                val all = mutableListOf<Item>()
+                itemList.value.items?.let {
+                    all.addAll(it)
+                }
+                resp.data.items?.let {
+                    all.addAll(it)
+                }
             }
         }
     }

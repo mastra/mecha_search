@@ -6,26 +6,30 @@ import com.molol.mechasearch.data.database.model.*
 import com.molol.mechasearch.domain.model.Item
 import com.molol.mechasearch.domain.model.ItemList
 import com.molol.mechasearch.domain.repository.ItemRepository
+import com.molol.mechasearch.domain.util.GResult
+import java.lang.Exception
 
 class ItemRepositoryDatabaseImpl(val database: SearchDatabase) : ItemRepository {
 
-    override suspend fun search(query: String, offset: Int): ItemList {
+    override suspend fun search(query: String, offset: Int): GResult<ItemList> {
         val searchDao = database.searchEntityDao()
         searchDao.getSearch(query)?.let {
             val products = searchDao.searchProducts(query)
-            return ItemList(it.total, products.map { it.toModel() })
+            return GResult.Success(ItemList(it.total, products.map { it.toModel() }))
         }
-        return ItemList()
+        return GResult.Error(Exception("No Data found"))
     }
 
-    override suspend fun detail(id: String): Item =
-        database.productEntityDao().select(id)?.let {
-            val item = it.toModel()
-            val pictures = database.pictureEntityDao().selectByProduct(it.id)
-            return item.copy(pictures_url = pictures.map { pic ->
-                pic.url
-            })
-        } ?: Item()
+    override suspend fun detail(id: String): GResult<Item> =
+        GResult.Success(
+            database.productEntityDao().select(id)?.let {
+                val item = it.toModel()
+                val pictures = database.pictureEntityDao().selectByProduct(it.id)
+                item.copy(pictures_url = pictures.map { pic ->
+                    pic.url
+                })
+            } ?: Item()
+        )
 
 
     suspend fun insert(query: String, itemList: ItemList) {

@@ -26,17 +26,17 @@ interface ApiRetrofitService : ApiService {
     override suspend fun description(@Path("id") id: String): Description
 
     companion object {
-        fun getService(): ApiRetrofitService {
-            val logging = HttpLoggingInterceptor()
-            logging.setLevel(HttpLoggingInterceptor.Level.BODY)
-            val httpClient = OkHttpClient.Builder()
-            httpClient.addInterceptor(logging)
-            val retrofit = Retrofit.Builder()
+        fun getService(): ApiRetrofitService =
+            Retrofit.Builder()
                 .baseUrl(BASE_URL)
                 .addConverterFactory(GsonConverterFactory.create())
-                .client(httpClient.build())
+                .client(
+                    OkHttpClient.Builder()
+                        .addInterceptor(HttpLoggingInterceptor().setLevel(HttpLoggingInterceptor.Level.BODY))
+                        .build()
+                )
                 .build()
-            return retrofit.create(ApiRetrofitService::class.java)
-        }
+                .create(ApiRetrofitService::class.java)
+
     }
 }

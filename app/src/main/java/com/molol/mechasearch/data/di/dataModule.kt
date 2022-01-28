@@ -13,8 +13,8 @@ import org.koin.dsl.module
 
 val dataModule = module {
 
-    single<ApiService> { ApiKtorService.getService() }
-//    single<ApiService> { ApiRetrofitService.getService() }
+//    single<ApiService> { ApiKtorService.getService() }
+    single<ApiService> { ApiRetrofitService.getService() }
 
     single { ItemRepositoryApiImpl(get()) }
     single { ItemRepositoryDatabaseImpl(get()) }

@@ -10,6 +10,7 @@ import com.molol.mechasearch.domain.model.ItemList
 import com.molol.mechasearch.domain.repository.ItemRepository
 import com.molol.mechasearch.usecase.SearchUseCase
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 
 class SearchViewModel(val searchUseCase: SearchUseCase) : ViewModel() {
@@ -17,9 +18,11 @@ class SearchViewModel(val searchUseCase: SearchUseCase) : ViewModel() {
     val itemList: MutableState<ItemList> = mutableStateOf(ItemList())
     val showLoading: MutableState<Boolean> = mutableStateOf(false)
     val query: MutableState<String> = mutableStateOf("")
+    var searchJob: Job? = null
 
     fun search(query: String) {
-        viewModelScope.launch(Dispatchers.IO) {
+        searchJob?.cancel()
+        searchJob = viewModelScope.launch(Dispatchers.IO) {
             showLoading.value = true
             var resp = searchUseCase(query) //"MLA1108034370")
             showLoading.value = false
@@ -29,7 +32,8 @@ class SearchViewModel(val searchUseCase: SearchUseCase) : ViewModel() {
     }
 
     fun loadMore(offset: Int) {
-        viewModelScope.launch(Dispatchers.IO) {
+        searchJob?.cancel()
+        searchJob = viewModelScope.launch(Dispatchers.IO) {
             showLoading.value = true
             var resp = searchUseCase(query.value, offset)
             showLoading.value = false
